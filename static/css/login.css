@@ -1,0 +1,170 @@
+/* CSS para página de login - Sistema de Biblioteca */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f7f9;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    padding: 30px;
+    margin: 20px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    color: var(--primary, #2c3e50);
+    margin: 20px 0 10px;
+    font-size: 1.8rem;
+}
+
+.login-header p {
+    color: #777;
+    font-size: 1rem;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.login-form-container {
+    margin-top: 20px;
+}
+
+.login-messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 12px 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.alert-error {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--danger, #e74c3c);
+    border-left: 4px solid var(--danger, #e74c3c);
+}
+
+.alert i {
+    margin-right: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--dark, #2c3e50);
+    font-weight: 500;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input-with-icon input:focus {
+    border-color: var(--accent, #1abc9c);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.2);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    color: #555;
+}
+
+.remember-me input {
+    margin-right: 8px;
+}
+
+.forgot-password {
+    color: var(--accent, #1abc9c);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.forgot-password:hover {
+    color: var(--primary, #2c3e50);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent, #1abc9c);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-login i {
+    margin-right: 10px;
+}
+
+.btn-login:hover {
+    background-color: #16a085;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px;
+    }
+    
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

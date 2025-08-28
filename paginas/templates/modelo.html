@@ -1,0 +1,193 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Biblioteca</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/formulario.css' %}">
+    <link rel="stylesheet" href="{% static 'css/listas.css' %}">
+    <link rel="stylesheet" href="{% static 'css/formulario_exclusao.css' %}">
+    <link rel="stylesheet" href="{% static 'css/livros_disponiveis.css' %}">
+</head>
+
+
+<body>
+    {% if request.user.is_authenticated %}
+    {% block menu %}
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-book-open fa-2x"></i>
+            <h2 style="color: white;">BiblioSys</h2>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="{% url 'pagina_index' %}" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                <li><a href="{% url 'livros_disponiveis' %}"><i class="fas fa-book"></i> <span>Acervo</span></a></li>
+                <li><a href="{% url 'meus_emprestimos' %}"><i class="fas fa-hand-holding-usd"></i> <span>Empréstimos</span></a></li>
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <li><a href="{% url 'usuario_list' %}"><i class="fas fa-users"></i> <span>Usuários</span></a></li>
+                <li><a href="{% url 'livro_list' %}"><i class="fas fa-user-cog"></i> <span>Administração</span></a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Relatórios</span></a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> <span>Configurações</span></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block header %}
+    <!-- Conteúdo Principal -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Pesquisar..." style="border: none; background: transparent; padding: 5px; outline: none;">
+            </div>
+            
+            <div class="user-info">
+                <i class="fas fa-bell"></i>
+                <span>{{ request.user }}</span>
+                <form method="post" action="{% url 'logout' %}" style="display: inline">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endblock %}
+
+        {% block mensagem %}
+        <!-- Conteúdo -->
+        <div class="content">
+            <div class="welcome-banner">
+                <h1>Bem-vindo ao Sistema de Biblioteca</h1>
+                <p>Gerencie seu acervo, controle empréstimos e tenha relatórios detalhados em um só lugar.</p>
+            </div>
+        {% endblock %}
+            
+        {% block cards %}
+            <h2>Visão Geral</h2>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>1,248</h3>
+                            <p>Livros no Acervo</p>
+                        </div>
+                        <div class="card-icon bg-primary">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>342</h3>
+                            <p>Empréstimos Ativos</p>
+                        </div>
+                        <div class="card-icon bg-success">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>28</h3>
+                            <p>Devoluções Pendentes</p>
+                        </div>
+                        <div class="card-icon bg-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>856</h3>
+                            <p>Usuários Cadastrados</p>
+                        </div>
+                        <div class="card-icon bg-danger">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
+
+            {% block atividade_recentes %}
+            <div class="recent-activities">
+                <h2>Atividades Recentes</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: var(--success);">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Novo livro adicionado</h4>
+                            <p>"O Senhor dos Anéis" foi adicionado ao acervo</p>
+                        </div>
+                        <div class="activity-time">Há 2 horas</div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: var(--accent);">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Empréstimo realizado</h4>
+                            <p>Maria Silva pegou "1984" emprestado</p>
+                        </div>
+                        <div class="activity-time">Há 5 horas</div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: var(--warning);">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Devolução atrasada</h4>
+                            <p>"A Revolução dos Bichos" está com devolução atrasada</p>
+                        </div>
+                        <div class="activity-time">Ontem</div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background-color: var(--primary);">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Novo usuário</h4>
+                            <p>Carlos Oliveira foi cadastrado no sistema</p>
+                        </div>
+                        <div class="activity-time">Ontem</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    {% else %}
+    <main class="main-content login-page">
+      <div class="login-container">
+        <div class="login-header">
+          <h2>Você precisa estar autenticado para acessar o sistema.</h2>
+          <a href="{% url 'login' %}" class="btn-primary">Fazer Login</a>
+        </div>
+      </div>
+    </main>
+    {% endif %}
+</body>
+</html>

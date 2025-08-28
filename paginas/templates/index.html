@@ -1,0 +1,55 @@
+{% extends 'modelo.html' %}
+{% load static %}
+
+{% block cards %}
+   <h2>Visão Geral</h2>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>0</h3>
+                            <p>Livros no Acervo</p>
+                        </div>
+                        <div class="card-icon bg-primary">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>0</h3>
+                            <p>Empréstimos Ativos</p>
+                        </div>
+                        <div class="card-icon bg-success">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>0</h3>
+                            <p>Devoluções Pendentes</p>
+                        </div>
+                        <div class="card-icon bg-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>0</h3>
+                            <p>Usuários Cadastrados</p>
+                        </div>
+                        <div class="card-icon bg-danger">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}

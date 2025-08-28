@@ -1,0 +1,66 @@
+{% extends 'modelo.html' %}
+{% load static %}
+
+{% block mensagem %}
+{% endblock %}
+
+{% block cards %}
+<div class="content">
+
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-user-pen"></i> Livros</h1>
+                <div class="header-actions">
+                    <a href="{% url 'livro_create' %}" class="btn"><i class="fas fa-plus"></i> Novo Livro</a>
+                    <a href="{% url 'autor_list' %}" class="btn btn-tertiary"><i class="fas fa-user-pen"></i> Ver Autores</a>
+                    <a href="{% url 'genero_list' %}" class="btn btn-tertiary"><i class="fas fa-tags"></i> Ver Gêneros</a>
+                </div>
+            </div>
+
+        
+            <div class="authors-table-container">
+                <table class="authors-table">
+                    <thead>
+                        <tr>
+                            <th class="id-column">ID</th>
+                            <th>Titulo</th>
+                            <th>Autor</th>
+                            <th>Gênero</th>
+                            <th>Disponível</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                        
+                    </thead>
+                    <tbody>
+                        {% for livro in livros %}
+                        <tr>
+                            <td class="id-column">{{ livro.id }}</td>
+                            <td>{{ livro.titulo }}</td>
+                            <td>{{ livro.autor.nome }}</td>
+                            <td>{{ livro.genero.nome }}</td>
+                            <td>{{ livro.disponivel }}</td>
+                            <td>{{ livro.estado }}</td>
+                            <td class="actions">
+                                <a href="{% url 'editar_livro' livro.id %}" class="btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="{% url 'excluir_livro' livro.id %}" class="btn-delete">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding: 30px;">
+                                Nenhum livro cadastrado.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}
+
+{% block atividade_recentes %}
+{% endblock %}

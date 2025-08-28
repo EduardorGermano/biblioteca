@@ -1,0 +1,56 @@
+{% extends 'modelo.html' %}
+{% load static %}
+
+{% block mensagem %}
+{% endblock %}
+
+{% block cards %}
+<div class="content">
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-user-pen"></i> Gênero</h1>
+                <div class="header-actions">
+                    <a href="{% url 'genero_create' %}" class="btn"><i class="fas fa-plus"></i> Novo Gênero</a>
+                    <a href="{% url 'livro_list' %}" class="btn btn-secondary"><i class="fas fa-book"></i> Ver Livros</a>
+                    <a href="{% url 'autor_list' %}" class="btn btn-tertiary"><i class="fas fa-user-pen"></i> Ver Autores</a>
+                </div>
+            </div>
+
+            <div class="authors-table-container">
+                <table class="authors-table">
+                    <thead>
+                        <tr>
+                            <th class="id-column">ID</th>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                        
+                    </thead>
+                    <tbody>
+                        {% for genero in generos %}
+                        <tr>
+                            <td class="id-column">{{ genero.id }}</td>
+                            <td>{{ genero.nome }}</td>
+                            <td class="actions">
+                                <a href="{% url 'editar_genero' genero.id %}" class="btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="{% url 'excluir_genero' genero.id %}" class="btn-delete">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding: 30px;">
+                                Nenhum genero cadastrado.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}
+
+{% block atividade_recentes %}
+{% endblock %}

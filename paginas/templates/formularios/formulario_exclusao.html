@@ -1,0 +1,38 @@
+{% extends 'modelo.html' %}
+{% load static %}
+
+{% block mensagem %}
+{% endblock %}
+
+{% block cards %}
+<div class="exclusao-container">
+    <div class="exclusao-header">
+        <h1 class="exclusao-title">⚠️ Exclusão de Registros</h1>
+        <p class="exclusao-subtitle"><b>Tem certeza que deseja excluir permanentemente o registro:</b></p>
+    </div>
+
+    <div class="exclusao-object">
+        {{ object }}
+    </div>
+
+    <div class="exclusao-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Atenção:</strong> Esta ação não pode ser desfeita. O registro será permanentemente removido do sistema.
+    </div>
+
+    <form class="modelo-form" action="" method="POST">
+        {% csrf_token %}
+        <div class="exclusao-actions">
+            <a class="btn-exclusao btn-exclusao-secondary" href="{% url 'pagina_index' %}">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+            <button type="submit" class="btn-exclusao btn-exclusao-danger">
+                <i class="fas fa-trash"></i> Confirmar Exclusão
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block atividade_recentes %}
+{% endblock %}

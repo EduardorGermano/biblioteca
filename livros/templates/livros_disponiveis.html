@@ -1,0 +1,56 @@
+{% extends 'modelo.html' %}
+{% load static %}
+
+{% block mensagem %}
+{% endblock %}
+
+{% block cards %}
+<div class="livros-disponiveis-container">
+    <h2 class="livros-disponiveis-title">Livros Disponíveis para Empréstimo</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="livros-disponiveis-grid">
+        {% for livro in livros %}
+            {% if livro.disponivel %}
+            <div class="livro-card">
+                <div class="livro-card-body">
+                    <h5 class="livro-card-title">{{ livro.titulo }}</h5>
+                    <p class="livro-card-text">
+                        <strong>Autor:</strong> {{ livro.autor }}<br>
+                        <strong>Gênero:</strong> {{ livro.genero }}<br>
+                        <strong>Estado:</strong> 
+                        <span class="livro-badge 
+                            {% if livro.estado == 'Novo' %}livro-bg-success
+                            {% elif livro.estado == 'Usado' %}livro-bg-warning
+                            {% else %}livro-bg-danger{% endif %}">
+                            {{ livro.estado }}
+                        </span>
+                    </p>
+                </div>
+                <div class="livro-card-footer">
+                    <form method="post" action="{% url 'realizar_emprestimo' livro.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="livro-btn-reservar">Reservar Livro</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        {% empty %}
+            <div class="livro-alert-info">
+                Nenhum livro disponível no momento.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block atividade_recentes %}
+{% endblock %}
