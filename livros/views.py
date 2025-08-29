@@ -29,18 +29,31 @@ class AutorCreateView(AdminRequiredMixin, CreateView):
     template_name = 'formularios/formulario.html'
     fields = ['nome']
     success_url = reverse_lazy('autor_list')
+    
+    extra_context = {
+        "btn_cadastro": "Cadastrar Autor",
+    }
 
 class GeneroCreateView(AdminRequiredMixin, CreateView):
     model = Genero
     template_name = 'formularios/formulario.html'
     fields = ['nome']
     success_url = reverse_lazy('genero_list')
+    
+    extra_context = {
+        "btn_cadastro" : "Cadastrar Genero",
+    }
+    
 
 class LivroCreateView(AdminRequiredMixin, CreateView):
     model = Livro
     template_name = 'formularios/formulario.html'
     fields = ['titulo', 'autor', 'genero', 'disponivel', 'estado']
     success_url = reverse_lazy('livro_list')
+    
+    extra_context = {
+        "btn_cadastro" : "Cadastrar Livro",
+    }
 
 
 ##### UPDATE VIEW #####
