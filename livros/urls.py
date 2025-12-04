@@ -1,7 +1,7 @@
 from django.urls import path
 
 #CREATE
-from .views import AutorCreateView, GeneroCreateView, LivroCreateView
+from .views import AutorCreateView, GeneroCreateView, LivroCreateView, EmprestimoCreateView
 #UPDATE
 from .views import AutorUpdateView, GeneroUpdateView, LivroUpdateView
 #DELETE
@@ -31,6 +31,7 @@ urlpatterns = [
 
    path('livros-disponiveis/', LivrosDisponiveisView.as_view(), name='livros_disponiveis'),
    path('emprestimo/<int:livro_id>/', views.realizar_emprestimo, name='realizar_emprestimo'),
+   path('emprestimo/create/<int:livro_id>/', EmprestimoCreateView.as_view(), name='emprestimo_create'),
    path('devolver/<int:emprestimo_id>/', views.devolver_livro, name='devolver_livro'),
    path('meus-emprestimos/', views.meus_emprestimos, name='meus_emprestimos'),
 

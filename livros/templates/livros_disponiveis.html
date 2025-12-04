@@ -7,7 +7,35 @@
 {% block cards %}
 <div class="livros-disponiveis-container">
     <h2 class="livros-disponiveis-title">Livros Disponíveis para Empréstimo</h2>
-    
+    <form method="get" class="livros-filtro-form">
+        <div class="filtro-row">
+            <input type="text" name="q" placeholder="Pesquisar título..." value="{{ request.GET.q|default:'' }}" class="filtro-input" />
+
+            <select name="autor" class="filtro-select">
+                <option value="">Todos os Autores</option>
+                {% for a in autores %}
+                    <option value="{{ a.id }}" {% if request.GET.autor == a.id|stringformat:"s" %}selected{% endif %}>{{ a.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="genero" class="filtro-select">
+                <option value="">Todos os Gêneros</option>
+                {% for g in generos %}
+                    <option value="{{ g.id }}" {% if request.GET.genero == g.id|stringformat:"s" %}selected{% endif %}>{{ g.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="estado" class="filtro-select">
+                <option value="">Todos os Estados</option>
+                {% for e in estados %}
+                    <option value="{{ e }}" {% if request.GET.estado == e %}selected{% endif %}>{{ e }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="filtro-btn">Filtrar</button>
+            <a href="{% url 'livros_disponiveis' %}" class="filtro-limpar">Limpar</a>
+        </div>
+    </form>
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -36,7 +64,7 @@
                     </p>
                 </div>
                 <div class="livro-card-footer">
-                    <form method="post" action="{% url 'realizar_emprestimo' livro.id %}">
+                    <form method="post" action="{% url 'emprestimo_create' livro.id %}">
                         {% csrf_token %}
                         <button type="submit" class="livro-btn-reservar">Reservar Livro</button>
                     </form>
@@ -49,6 +77,31 @@
             </div>
         {% endfor %}
     </div>
+    {% if is_paginated %}
+    <nav class="pagination-container" aria-label="Paginação">
+        <ul class="pagination-list">
+            {% if page_obj.has_previous %}
+                <li class="pagination-item"><a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">Anterior</a></li>
+            {% else %}
+                <li class="pagination-item disabled">Anterior</li>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="pagination-item active">{{ num }}</li>
+                {% else %}
+                    <li class="pagination-item"><a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="pagination-item"><a href="?{% if querystring %}{{ querystring }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Próximo</a></li>
+            {% else %}
+                <li class="pagination-item disabled">Próximo</li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}
 

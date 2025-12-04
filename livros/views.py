@@ -11,6 +11,9 @@ from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required  
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from livros.models import Autor, Genero, Livro
+from .forms import LivroForm
+from django import forms
+from django.db import transaction
 
 # Defina a mixin primeiro, antes de usá-la nas views
 class AdminRequiredMixin(UserPassesTestMixin):
@@ -48,7 +51,7 @@ class GeneroCreateView(AdminRequiredMixin, CreateView):
 class LivroCreateView(AdminRequiredMixin, CreateView):
     model = Livro
     template_name = 'formularios/formulario.html'
-    fields = ['titulo', 'autor', 'genero', 'disponivel', 'estado']
+    form_class = LivroForm
     success_url = reverse_lazy('livro_list')
     
     extra_context = {
@@ -73,7 +76,7 @@ class GeneroUpdateView(AdminRequiredMixin, UpdateView):
 class LivroUpdateView(AdminRequiredMixin, UpdateView):
     model = Livro
     template_name = 'formularios/formulario.html'
-    fields = ['titulo', 'autor', 'genero', 'disponivel', 'estado']
+    form_class = LivroForm
     success_url = reverse_lazy('livro_list')
 
 ##### DELETE VIEW #####
@@ -113,6 +116,11 @@ class LivroListView(AdminRequiredMixin, ListView):
     model = Livro
     template_name = 'livro_list.html'
     context_object_name = 'livros'
+    paginate_by = 20
+
+    def get_queryset(self):
+        # Otimização: quando listando livros, traga autor e genero para evitar N+1
+        return Livro.objects.select_related('autor', 'genero').all()
 
 
 #### Gerenciar Emprestimo ####
@@ -149,15 +157,122 @@ def devolver_livro(request, emprestimo_id):
 
 @login_required
 def meus_emprestimos(request):
-    emprestimos = Emprestimo.objects.filter(usuario=request.user).order_by('-data_emprestimo')
+    # Otimização: trazer o livro relacionado para evitar consultas extras no template
+    emprestimos = Emprestimo.objects.filter(usuario=request.user).select_related('livro').order_by('-data_emprestimo')
     return render(request, 'meus_emprestimos.html', {'emprestimos': emprestimos})
 
 class LivrosDisponiveisView(LoginRequiredMixin, ListView):
     model = Livro
     template_name = 'livros_disponiveis.html'
     context_object_name = 'livros'
-
+    paginate_by = 12
     def get_queryset(self):
-        return Livro.objects.filter(disponivel=True)
+        # Base: apenas livros disponíveis
+        qs = Livro.objects.filter(disponivel=True)
+
+        # Filtros via querystring
+        q = self.request.GET.get('q')
+        autor = self.request.GET.get('autor')
+        genero = self.request.GET.get('genero')
+        estado = self.request.GET.get('estado')
+
+        if q:
+            qs = qs.filter(titulo__icontains=q)
+
+        if autor:
+            try:
+                qs = qs.filter(autor_id=int(autor))
+            except (ValueError, TypeError):
+                pass
+
+        if genero:
+            try:
+                qs = qs.filter(genero_id=int(genero))
+            except (ValueError, TypeError):
+                pass
+
+        if estado:
+            qs = qs.filter(estado=estado)
+
+        # Otimização: trazer autor e genero para evitar consultas N+1 na listagem
+        qs = qs.select_related('autor', 'genero')
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Listas para os selects do formulário de filtro
+        context['autores'] = Autor.objects.all()
+        context['generos'] = Genero.objects.all()
+        # Estados a partir das choices do modelo
+        context['estados'] = [c[0] for c in Livro._meta.get_field('estado').choices]
+        # Querystring atual sem o parâmetro page — útil para manter filtros ao paginar
+        qs = self.request.GET.copy()
+        if 'page' in qs:
+            qs.pop('page')
+        context['querystring'] = qs.urlencode()
+        return context
+
+
+class EmprestimoForm(forms.ModelForm):
+    class Meta:
+        model = Emprestimo
+        fields = []  # nenhum campo exposto; serão preenchidos em form_valid
+
+
+class EmprestimoCreateView(LoginRequiredMixin, CreateView):
+    model = Emprestimo
+    form_class = EmprestimoForm
+    # não usamos template específico aqui porque o formulário simples é apenas um botão
+
+    def dispatch(self, request, *args, **kwargs):
+        # carregar o livro a partir da URL
+        self.livro = get_object_or_404(Livro, id=kwargs.get('livro_id'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # Para evitar condição de corrida, usamos uma transação e lock no registro do livro
+        try:
+            with transaction.atomic():
+                livro = Livro.objects.select_for_update().get(pk=self.livro.pk)
+                if not livro.disponivel:
+                    form.add_error(None, 'Este livro não está disponível para empréstimo.')
+                    return self.form_invalid(form)
+
+                emprestimo = form.save(commit=False)
+                emprestimo.livro = livro
+                emprestimo.usuario = self.request.user
+                emprestimo.data_devolucao_prevista = timezone.now() + timedelta(days=14)
+
+                # validação do modelo
+                try:
+                    emprestimo.full_clean()
+                except ValidationError as e:
+                    form.add_error(None, e)
+                    return self.form_invalid(form)
+
+                emprestimo.save()
+
+                # atualiza disponibilidade do livro
+                livro.disponivel = False
+                livro.save()
+
+        except Livro.DoesNotExist:
+            form.add_error(None, 'Livro não encontrado.')
+            return self.form_invalid(form)
+
+        messages.success(self.request, 'Empréstimo realizado com sucesso!')
+        return redirect('meus_emprestimos')
+
+    def form_invalid(self, form):
+        # Em vez de renderizar um template de formulário (que não existe aqui),
+        # redirecionamos com mensagem de erro para a lista de livros disponíveis.
+        errors = form.non_field_errors()
+        if errors:
+            for e in errors:
+                messages.error(self.request, str(e))
+        else:
+            messages.error(self.request, 'Erro ao processar o empréstimo.')
+        return redirect('livros_disponiveis')
     
 

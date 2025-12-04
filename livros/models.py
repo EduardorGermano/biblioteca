@@ -21,6 +21,7 @@ class Livro(models.Model):
     titulo = models.CharField(max_length=200 , verbose_name='Título')
     autor = models.ForeignKey(Autor, on_delete=models.PROTECT, verbose_name='Autor')
     genero = models.ForeignKey(Genero, on_delete=models.PROTECT, verbose_name='Gênero')
+    data_aquisicao = models.DateField(null=True, blank=True, verbose_name='Data de Aquisição')
     disponivel = models.BooleanField(default=True, verbose_name='Disponível', choices=[
         (True, 'Sim'),
         (False, 'Não'),

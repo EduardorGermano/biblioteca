@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Debug toolbar
+    "debug_toolbar",
     "paginas.apps.PaginasConfig",
     "livros.apps.LivrosConfig",
     "usuarios.apps.UsuariosConfig",
@@ -45,6 +47,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Debug toolbar middleware (deve vir cedo)
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -134,3 +138,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = 'pagina_index'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+# Debug toolbar: IPs autorizadas para exibir o painel em desenvolvimento
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost",
+]

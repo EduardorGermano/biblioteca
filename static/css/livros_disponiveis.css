@@ -118,3 +118,80 @@
         margin-bottom: 15px;
     }
 }
+
+/* Filtro de busca */
+.livros-filtro-form {
+    margin-bottom: 10px;
+}
+.filtro-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.filtro-input {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    min-width: 220px;
+    flex: 1 1 220px;
+}
+.filtro-select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+}
+.filtro-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.filtro-limpar {
+    display: inline-block;
+    margin-left: 6px;
+    color: #666;
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+.filtro-limpar:hover { text-decoration: underline; }
+
+/* Paginação */
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+.pagination-list {
+    list-style: none;
+    display: flex;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+}
+.pagination-item {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    color: #333;
+}
+.pagination-item a { color: inherit; text-decoration: none; }
+.pagination-item.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.pagination-item.disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 480px) {
+    .filtro-input { min-width: 140px; }
+    .pagination-list { gap: 4px; }
+    .pagination-item { padding: 6px 8px; }
+}
